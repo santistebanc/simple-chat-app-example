@@ -68,15 +68,9 @@ export const useGeckos = () => {
     });
 
     return () => {
-      try {
-        if (channelRef.current && typeof channelRef.current.close === 'function') {
-          channelRef.current.close();
-        }
-        channelRef.current = null;
-        isConnectingRef.current = false;
-      } catch (error) {
-        console.warn('Error closing geckos channel:', error);
-      }
+      // Simply clean up our refs - geckos.io will handle connection cleanup
+      channelRef.current = null;
+      isConnectingRef.current = false;
     };
   }, []);
 
