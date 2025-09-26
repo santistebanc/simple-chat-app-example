@@ -22,7 +22,6 @@ const io = geckos({
     max: process.env.PORT_RANGE_MAX ? parseInt(process.env.PORT_RANGE_MAX) : 10007,
   },
   cors: { 
-    allowAuthorization: true,
     origin: "*"
   },
 });

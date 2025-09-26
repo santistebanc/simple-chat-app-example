@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Send, Users, Wifi, WifiOff } from 'lucide-react';
+import { MessageCircle, Send, Wifi, WifiOff } from 'lucide-react';
 import { useGeckos } from './hooks/useGeckos';
 import { Message } from './types/chat';
 
@@ -100,7 +100,6 @@ function App() {
                   <span>Disconnected</span>
                 </Badge>
               )}
-              <Users className="h-4 w-4 text-muted-foreground" />
             </div>
           </CardHeader>
           
