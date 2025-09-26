@@ -30,7 +30,7 @@ const io = geckos({
 app.use(express.static(path.join(__dirname, '../dist/client')));
 
 // API routes
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 

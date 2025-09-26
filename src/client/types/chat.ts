@@ -4,12 +4,6 @@ export interface Message {
   timestamp: string;
 }
 
-export interface GeckosChannel {
-  id: string;
-  emit: (event: string, data?: any) => void;
-  on: (event: string, callback: (data: any) => void) => void;
-  off: (event: string, callback: (data: any) => void) => void;
-  room: {
-    emit: (event: string, data?: any) => void;
-  };
-}
+import { ClientChannel } from '@geckos.io/client';
+
+export type GeckosChannel = ClientChannel;

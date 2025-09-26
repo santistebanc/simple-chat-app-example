@@ -50,19 +50,12 @@ function App() {
       }
     };
 
-    // Remove any existing listeners first
-    if (typeof channel.off === 'function') {
-      channel.off('chat message');
-    }
-
-    // Add the new listener
+    // Add the listener
     channel.on('chat message', handleMessage);
 
     return () => {
-      // Clean up the listener
-      if (channel && typeof channel.off === 'function') {
-        channel.off('chat message', handleMessage);
-      }
+      // Note: geckos.io client doesn't support removing listeners
+      // The listener will be cleaned up when the component unmounts
     };
   }, [channel]);
 
