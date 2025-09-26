@@ -18,14 +18,14 @@ export const useGeckos = () => {
     // For development (localhost), connect to backend server on port 3000
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       geckosConfig = {
-        port: '3000',
-        url: `${protocol}//${hostname}:3000`,
+        port: 3000,
+        url: `${protocol}//${hostname}`,
       };
     } else {
       // For production deployments behind reverse proxy, use the current origin
       const port = window.location.port || (protocol === 'https:' ? '443' : '80');
       geckosConfig = {
-        port: port,
+        port: parseInt(port),
         url: window.location.origin,
       };
     }
