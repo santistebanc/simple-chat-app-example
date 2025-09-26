@@ -83,9 +83,7 @@ io.onConnection((channel) => {
   
   console.log(`User ${userName} (${channelId}) connected`);
   
-  // Broadcast updated user list to all clients
-  broadcastUserList();
-  
+  // Set up event handlers first
   channel.onDisconnect(() => {
     const name = userNames.get(channelId) || channelId;
     console.log(`${name} (${channelId}) got disconnected`);
@@ -96,14 +94,23 @@ io.onConnection((channel) => {
     broadcastUserList();
   });
 
-      // Send welcome message with the user's name
-      channel.emit('chat message', `Welcome to the chat ${userName}!`);
+  // Handle user list requests
+  channel.on('request user list', () => {
+    const userList = Array.from(connectedUsers.values());
+    console.log(`Sending user list to ${userName}:`, userList);
+    channel.emit('user list', userList);
+  });
 
-      // Handle user list requests
-      channel.on('request user list', () => {
-        const userList = Array.from(connectedUsers.values());
-        channel.emit('user list', userList);
-      });
+  // Send welcome message with the user's name
+  channel.emit('chat message', `Welcome to the chat ${userName}!`);
+
+  // Send initial user list to the newly connected user
+  const userList = Array.from(connectedUsers.values());
+  console.log(`Sending initial user list to ${userName}:`, userList);
+  channel.emit('user list', userList);
+  
+  // Broadcast updated user list to all clients
+  broadcastUserList();
 
       channel.on('chat message', (data) => {
         const name = userNames.get(channelId) || channelId;

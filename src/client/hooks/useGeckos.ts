@@ -20,9 +20,11 @@ export const useGeckos = () => {
       
       // Ensure user list listener is set up
       globalConnection.on('user list', (data: any) => {
-        console.log('Received user list:', data);
+        console.log('Received user list (existing connection):', data);
         if (Array.isArray(data)) {
           setUsers(data as User[]);
+        } else {
+          console.warn('Received non-array user list data (existing connection):', data);
         }
       });
       return;
@@ -36,9 +38,11 @@ export const useGeckos = () => {
         
         // Ensure user list listener is set up
         conn.on('user list', (data: any) => {
-          console.log('Received user list:', data);
+          console.log('Received user list (pending connection):', data);
           if (Array.isArray(data)) {
             setUsers(data as User[]);
+          } else {
+            console.warn('Received non-array user list data (pending connection):', data);
           }
         });
       });
@@ -95,10 +99,13 @@ export const useGeckos = () => {
           console.log('Received user list:', data);
           if (Array.isArray(data)) {
             setUsers(data as User[]);
+          } else {
+            console.warn('Received non-array user list data:', data);
           }
         });
 
         // Request initial user list
+        console.log('Requesting initial user list...');
         geckosChannel.emit('request user list');
       });
 
