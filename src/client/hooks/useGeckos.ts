@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import geckos from '@geckos.io/client';
 import { GeckosChannel } from '../types/chat';
 
@@ -6,8 +6,17 @@ export const useGeckos = () => {
   const [channel, setChannel] = useState<GeckosChannel | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const channelRef = useRef<GeckosChannel | null>(null);
+  const isConnectingRef = useRef(false);
 
   useEffect(() => {
+    // Prevent duplicate connections in React Strict Mode
+    if (isConnectingRef.current || channelRef.current) {
+      return;
+    }
+
+    isConnectingRef.current = true;
+
     // Get the current hostname and protocol
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
@@ -32,12 +41,14 @@ export const useGeckos = () => {
 
     console.log('Connecting to geckos with config:', geckosConfig);
     const geckosChannel = geckos(geckosConfig);
+    channelRef.current = geckosChannel;
 
     geckosChannel.onConnect((error) => {
       if (error) {
         console.error('Connection error:', error);
         setConnectionError(error.message);
         setIsConnected(false);
+        isConnectingRef.current = false;
         return;
       }
 
@@ -45,19 +56,24 @@ export const useGeckos = () => {
       setChannel(geckosChannel);
       setIsConnected(true);
       setConnectionError(null);
+      isConnectingRef.current = false;
     });
 
     geckosChannel.onDisconnect(() => {
       console.log('Disconnected from server');
       setChannel(null);
       setIsConnected(false);
+      channelRef.current = null;
+      isConnectingRef.current = false;
     });
 
     return () => {
       try {
-        if (geckosChannel && typeof geckosChannel.close === 'function') {
-          geckosChannel.close();
+        if (channelRef.current && typeof channelRef.current.close === 'function') {
+          channelRef.current.close();
         }
+        channelRef.current = null;
+        isConnectingRef.current = false;
       } catch (error) {
         console.warn('Error closing geckos channel:', error);
       }

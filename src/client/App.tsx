@@ -21,14 +21,32 @@ function App() {
       // Handle different message types
       if (typeof data === 'string') {
         // Welcome message from server
-        setMessages(prev => [...prev, { 
-          id: 'system', 
-          message: data, 
-          timestamp: new Date().toISOString() 
-        }]);
+        setMessages(prev => {
+          // Check if this welcome message already exists
+          const exists = prev.some(msg => 
+            msg.id === 'system' && msg.message === data
+          );
+          if (exists) return prev;
+          
+          return [...prev, { 
+            id: 'system', 
+            message: data, 
+            timestamp: new Date().toISOString() 
+          }];
+        });
       } else if (data && typeof data === 'object' && data.id && data.message) {
         // Chat message from other users
-        setMessages(prev => [...prev, data]);
+        setMessages(prev => {
+          // Check if this exact message already exists
+          const exists = prev.some(msg => 
+            msg.id === data.id && 
+            msg.message === data.message && 
+            msg.timestamp === data.timestamp
+          );
+          if (exists) return prev;
+          
+          return [...prev, data];
+        });
       }
     };
 
