@@ -17,6 +17,14 @@ export const useGeckos = () => {
     if (globalConnection) {
       setChannel(globalConnection);
       setIsConnected(true);
+      
+      // Ensure user list listener is set up
+      globalConnection.on('user list', (data: any) => {
+        console.log('Received user list:', data);
+        if (Array.isArray(data)) {
+          setUsers(data as User[]);
+        }
+      });
       return;
     }
 
@@ -25,6 +33,14 @@ export const useGeckos = () => {
       globalConnectionPromise.then((conn) => {
         setChannel(conn);
         setIsConnected(true);
+        
+        // Ensure user list listener is set up
+        conn.on('user list', (data: any) => {
+          console.log('Received user list:', data);
+          if (Array.isArray(data)) {
+            setUsers(data as User[]);
+          }
+        });
       });
       return;
     }
@@ -81,6 +97,9 @@ export const useGeckos = () => {
             setUsers(data as User[]);
           }
         });
+
+        // Request initial user list
+        geckosChannel.emit('request user list');
       });
 
       geckosChannel.onDisconnect(() => {

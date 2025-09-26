@@ -96,19 +96,25 @@ io.onConnection((channel) => {
     broadcastUserList();
   });
 
-  // Send welcome message with the user's name
-  channel.emit('chat message', `Welcome to the chat ${userName}!`);
+      // Send welcome message with the user's name
+      channel.emit('chat message', `Welcome to the chat ${userName}!`);
 
-  channel.on('chat message', (data) => {
-    const name = userNames.get(channelId) || channelId;
-    console.log(`Message from ${name} (${channelId}):`, data);
-    channel.room.emit('chat message', {
-      id: channelId,
-      name: name,
-      message: data,
-      timestamp: new Date().toISOString(),
-    });
-  });
+      // Handle user list requests
+      channel.on('request user list', () => {
+        const userList = Array.from(connectedUsers.values());
+        channel.emit('user list', userList);
+      });
+
+      channel.on('chat message', (data) => {
+        const name = userNames.get(channelId) || channelId;
+        console.log(`Message from ${name} (${channelId}):`, data);
+        channel.room.emit('chat message', {
+          id: channelId,
+          name: name,
+          message: data,
+          timestamp: new Date().toISOString(),
+        });
+      });
 });
 
 server.listen(port, () => {
