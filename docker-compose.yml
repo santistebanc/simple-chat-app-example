@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  chat-app:
+    build: .
+    container_name: geckos-chat-app
+    ports:
+      - "3000:3000"           # HTTP port
+      - "10000-10007:10000-10007/udp"  # WebRTC UDP ports
+    environment:
+      - NODE_ENV=production
+      - PORT_RANGE_MIN=10000
+      - PORT_RANGE_MAX=10007
+    restart: unless-stopped
+    networks:
+      - chat-network
+
+  # Development service (optional)
+  chat-app-dev:
+    build: .
+    container_name: geckos-chat-app-dev
+    ports:
+      - "3001:3000"           # Different HTTP port for dev
+      - "10010-10017:10010-10017/udp"  # Different UDP port range for dev
+    environment:
+      - NODE_ENV=development
+      - PORT_RANGE_MIN=10010
+      - PORT_RANGE_MAX=10017
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm start
+    restart: unless-stopped
+    networks:
+      - chat-network
+    profiles:
+      - dev
+
+networks:
+  chat-network:
+    driver: bridge
