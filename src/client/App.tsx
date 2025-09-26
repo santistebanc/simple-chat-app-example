@@ -126,7 +126,7 @@ function App() {
                     }`}
                   >
                     <div className="font-medium text-xs mb-1">
-                      {msg.id === 'system' ? 'System' : `User ${msg.id}`}
+                      {msg.id === 'system' ? 'System' : (msg.name || `User ${msg.id}`)}
                     </div>
                     <div>{msg.message}</div>
                     <div className="text-xs opacity-70 mt-1">
