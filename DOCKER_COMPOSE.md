@@ -6,7 +6,7 @@ This project includes a `docker-compose.yml` file for easy deployment and develo
 
 ### Production Service (`geckos-app`)
 - **Container**: `geckos-chat-app`
-- **HTTPS Port**: 443
+- **HTTP Port**: 8080
 - **UDP Ports**: 10000-10007 (for WebRTC)
 - **Environment**: Production
 
@@ -56,13 +56,13 @@ docker-compose down
 
 ## Access
 
-- **Production**: https://localhost:443 (or https://localhost)
+- **Production**: http://localhost:8080
 - **Development**: http://localhost:3001
 
 ## Port Requirements
 
 Make sure the following ports are available:
-- **TCP 443**: HTTPS server (production)
+- **TCP 8080**: HTTP server (production)
 - **TCP 3000**: HTTP server (internal container port)
 - **UDP 10000-10007**: WebRTC communication (production)
 - **UDP 10010-10017**: WebRTC communication (development)

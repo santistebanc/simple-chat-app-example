@@ -5,7 +5,7 @@ services:
     build: .
     container_name: geckos-chat-app
     ports:
-      - "443:3000"            # HTTPS port (443) mapped to internal port 3000
+      - "8080:3000"           # HTTP port (8080) mapped to internal port 3000
       - "10000-10007:10000-10007/udp"  # WebRTC UDP ports
     environment:
       - NODE_ENV=production
