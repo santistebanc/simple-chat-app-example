@@ -1,20 +1,25 @@
 FROM node:18-bullseye AS build
 
 WORKDIR /usr/src/app
-COPY . .
+COPY package*.json ./
 
 RUN apt update -yq && apt upgrade -yq
 
-RUN rm -rf node_modules
-RUN npm install
+RUN npm ci --only=production
+
+COPY . .
+
 RUN npm run build
-RUN npm prune --production
 
 FROM node:18-bullseye
 ENV NODE_ENV=production
 
 WORKDIR /usr/src/app
-COPY --from=build /usr/src/app .
-COPY --from=build /usr/src/app/node_modules ./node_modules
 
-CMD node server.mjs
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/src/server.ts ./src/server.ts
+
+CMD node dist/server.js
