@@ -32,10 +32,16 @@ function App() {
       }
     };
 
+    // Remove any existing listeners first
+    if (typeof channel.off === 'function') {
+      channel.off('chat message');
+    }
+
+    // Add the new listener
     channel.on('chat message', handleMessage);
 
     return () => {
-      // Check if off method exists before calling it
+      // Clean up the listener
       if (channel && typeof channel.off === 'function') {
         channel.off('chat message', handleMessage);
       }
@@ -97,7 +103,7 @@ function App() {
               
               {messages.map((msg, index) => (
                 <div
-                  key={index}
+                  key={`${msg.id}-${msg.timestamp}-${index}`}
                   className={`flex ${
                     msg.id === 'system' ? 'justify-center' : 'justify-start'
                   }`}
