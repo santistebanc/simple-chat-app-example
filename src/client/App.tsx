@@ -16,23 +16,29 @@ function App() {
     if (!channel) return;
 
     const handleMessage = (data: any) => {
-      setMessages(prev => [...prev, data]);
-    };
-
-    const handleWelcome = (data: any) => {
-      setMessages(prev => [...prev, { 
-        id: 'system', 
-        message: data, 
-        timestamp: new Date().toISOString() 
-      }]);
+      console.log('Received message:', data);
+      
+      // Handle different message types
+      if (typeof data === 'string') {
+        // Welcome message from server
+        setMessages(prev => [...prev, { 
+          id: 'system', 
+          message: data, 
+          timestamp: new Date().toISOString() 
+        }]);
+      } else if (data && typeof data === 'object' && data.id && data.message) {
+        // Chat message from other users
+        setMessages(prev => [...prev, data]);
+      }
     };
 
     channel.on('chat message', handleMessage);
-    channel.on('chat message', handleWelcome);
 
     return () => {
-      channel.off('chat message', handleMessage);
-      channel.off('chat message', handleWelcome);
+      // Check if off method exists before calling it
+      if (channel && typeof channel.off === 'function') {
+        channel.off('chat message', handleMessage);
+      }
     };
   }, [channel]);
 

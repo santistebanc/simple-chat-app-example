@@ -49,7 +49,13 @@ export const useGeckos = () => {
     });
 
     return () => {
-      geckosChannel.close();
+      try {
+        if (geckosChannel && typeof geckosChannel.close === 'function') {
+          geckosChannel.close();
+        }
+      } catch (error) {
+        console.warn('Error closing geckos channel:', error);
+      }
     };
   }, []);
 
