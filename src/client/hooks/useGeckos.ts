@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import geckos from '@geckos.io/client';
-import { GeckosChannel } from '../types/chat';
+import { GeckosChannel, User } from '../types/chat';
 
 export const useGeckos = () => {
   const [channel, setChannel] = useState<GeckosChannel | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const channelRef = useRef<GeckosChannel | null>(null);
   const isConnectingRef = useRef(false);
 
@@ -57,6 +58,14 @@ export const useGeckos = () => {
       setIsConnected(true);
       setConnectionError(null);
       isConnectingRef.current = false;
+
+      // Listen for user list updates
+      geckosChannel.on('user list', (data: any) => {
+        console.log('Received user list:', data);
+        if (Array.isArray(data)) {
+          setUsers(data as User[]);
+        }
+      });
     });
 
     geckosChannel.onDisconnect(() => {
@@ -78,5 +87,6 @@ export const useGeckos = () => {
     channel,
     isConnected,
     connectionError,
+    users,
   };
 };

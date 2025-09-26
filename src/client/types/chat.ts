@@ -5,6 +5,12 @@ export interface Message {
   timestamp: string;
 }
 
+export interface User {
+  id: string;
+  name: string;
+  connectedAt: string;
+}
+
 import { ClientChannel } from '@geckos.io/client';
 
 export type GeckosChannel = ClientChannel;

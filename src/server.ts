@@ -31,6 +31,15 @@ function generateRandomName(): string {
 
 // Store user names by channel ID
 const userNames = new Map<string, string>();
+// Store connected users for the user list
+const connectedUsers = new Map<string, { id: string; name: string; connectedAt: string }>();
+
+// Function to broadcast user list to all connected clients
+function broadcastUserList() {
+  const userList = Array.from(connectedUsers.values());
+  io.room().emit('user list', userList);
+}
+
 const app = express();
 
 // Trust proxy for reverse proxy deployments
@@ -65,12 +74,26 @@ io.onConnection((channel) => {
   const channelId = channel.id || 'unknown';
   userNames.set(channelId, userName);
   
+  // Add user to connected users list
+  connectedUsers.set(channelId, {
+    id: channelId,
+    name: userName,
+    connectedAt: new Date().toISOString()
+  });
+  
   console.log(`User ${userName} (${channelId}) connected`);
+  
+  // Broadcast updated user list to all clients
+  broadcastUserList();
   
   channel.onDisconnect(() => {
     const name = userNames.get(channelId) || channelId;
     console.log(`${name} (${channelId}) got disconnected`);
     userNames.delete(channelId);
+    connectedUsers.delete(channelId);
+    
+    // Broadcast updated user list to all clients
+    broadcastUserList();
   });
 
   // Send welcome message with the user's name
