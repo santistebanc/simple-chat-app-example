@@ -8,8 +8,25 @@ export const useGeckos = () => {
   const [connectionError, setConnectionError] = useState<string | null>(null);
 
   useEffect(() => {
-    const port = window.location.port || '8080';
-    const geckosChannel = geckos({ port });
+    // Get the current hostname and protocol
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+    const port = window.location.port || (protocol === 'https:' ? '443' : '8080');
+    
+    // Configure geckos client for the current environment
+    const geckosConfig: any = {
+      port: port,
+      url: `${protocol}//${hostname}:${port}`,
+    };
+
+    // For production deployments behind reverse proxy, use the current origin
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      geckosConfig.url = window.location.origin;
+      geckosConfig.port = window.location.port || (protocol === 'https:' ? '443' : '80');
+    }
+
+    console.log('Connecting to geckos with config:', geckosConfig);
+    const geckosChannel = geckos(geckosConfig);
 
     geckosChannel.onConnect((error) => {
       if (error) {

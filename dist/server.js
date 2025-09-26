@@ -7,6 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const port = 3000;
 const app = express();
+// Trust proxy for reverse proxy deployments
+app.set('trust proxy', true);
 const server = http.createServer(app);
 const io = geckos({
     iceServers: process.env.NODE_ENV === 'production' ? iceServers : [],
