@@ -4,7 +4,7 @@ This project includes a `docker-compose.yml` file for easy deployment and develo
 
 ## Services
 
-### Production Service (`chat-app`)
+### Production Service (`geckos-app`)
 - **Container**: `geckos-chat-app`
 - **HTTP Port**: 3000
 - **UDP Ports**: 10000-10007 (for WebRTC)
@@ -21,7 +21,7 @@ This project includes a `docker-compose.yml` file for easy deployment and develo
 
 ### Start Production Service
 ```bash
-docker-compose up -d chat-app
+docker-compose up -d geckos-app
 ```
 
 ### Start Development Service
@@ -37,7 +37,7 @@ docker-compose --profile dev up -d
 ### View Logs
 ```bash
 # Production logs
-docker-compose logs -f chat-app
+docker-compose logs -f geckos-app
 
 # Development logs
 docker-compose logs -f chat-app-dev

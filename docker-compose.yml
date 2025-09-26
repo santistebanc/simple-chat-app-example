@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  chat-app:
+  geckos-app:
     build: .
     container_name: geckos-chat-app
     ports:
