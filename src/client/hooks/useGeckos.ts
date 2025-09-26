@@ -11,18 +11,23 @@ export const useGeckos = () => {
     // Get the current hostname and protocol
     const hostname = window.location.hostname;
     const protocol = window.location.protocol;
-    const port = window.location.port || (protocol === 'https:' ? '443' : '8080');
     
     // Configure geckos client for the current environment
-    const geckosConfig: any = {
-      port: port,
-      url: `${protocol}//${hostname}:${port}`,
-    };
+    let geckosConfig: any = {};
 
-    // For production deployments behind reverse proxy, use the current origin
-    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      geckosConfig.url = window.location.origin;
-      geckosConfig.port = window.location.port || (protocol === 'https:' ? '443' : '80');
+    // For development (localhost), connect to backend server on port 3000
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      geckosConfig = {
+        port: '3000',
+        url: `${protocol}//${hostname}:3000`,
+      };
+    } else {
+      // For production deployments behind reverse proxy, use the current origin
+      const port = window.location.port || (protocol === 'https:' ? '443' : '80');
+      geckosConfig = {
+        port: port,
+        url: window.location.origin,
+      };
     }
 
     console.log('Connecting to geckos with config:', geckosConfig);
